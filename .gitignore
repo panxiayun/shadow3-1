@@ -1,0 +1,6 @@
+*.o
+*.mod
+shadow3
+*.a
+build/
+shadow_version.h
