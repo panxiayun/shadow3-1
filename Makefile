@@ -4,7 +4,7 @@
 #
 #
 # Usage:
-#       make  (or make shadow3): builds shadow3 binary 
+#       make  (or make shadow3): builds shadow3 binary
 #       make lib        : builds shared libraries libshadow3*.so
 #       make libstatic  : builds static library libshadow3.a
 #       make examples   : compiles examples and tools using libraries:
@@ -27,12 +27,12 @@
 # HINTS:
 #
 #
-#   customize next section (only) 
+#   customize next section (only)
 #
 #
 #   Recommended compiler: gfortran
 #
-#   in ESRF/NICE: 
+#   in ESRF/NICE:
 #     source /scisoft/ESRF_sw/opteron2/set_environment.tcsh
 #     use  FC=gfortran
 #
@@ -40,7 +40,7 @@
 
 
 ##-------------------------------------------------------------------------------
-##                   THIS SECTION CAN BE CUSTOMIZED 
+##                   THIS SECTION CAN BE CUSTOMIZED
 ##-------------------------------------------------------------------------------
 
 #for 32 bits compilation, set this
@@ -51,14 +51,14 @@
 SO=.so
 EXE=
 COMPILEOPT=-D_COMPILE4NIX
-STATIC = -static
+#STATIC = -static
 #STATIC = -static -static-libgfortran -static-libgcc
 
 #settings for mac
 #SO=.so
 #EXE=
 #COMPILEOPT=-D_COMPILE4MAX
-#STATIC = 
+#STATIC =
 
 #settings for windows
 #SO=.dll
@@ -107,7 +107,7 @@ PY = python3
 CFLAGS = -fPIC $(32BITS)
 #-fopenmp -g
 
-LIBFLAGS = -shared -lm 
+LIBFLAGS = -shared -lm
 #-lpthread
 
 CPP = cpp -traditional
@@ -134,12 +134,12 @@ MPIFC = mpif90
 # note that the order is important...
 #
 # note that all fortran sources have now .F90 extension, and all are passed
-#      by the preprocessor, even if only a few ones have preprocessor 
-#      instructions, namely: 
-#                            shadow_version.F90  
-#                            shadow_globaldefinitions.F90  
-#                            shadow_variables.F90  
-#                            shadow_kernel.F90  
+#      by the preprocessor, even if only a few ones have preprocessor
+#      instructions, namely:
+#                            shadow_version.F90
+#                            shadow_globaldefinitions.F90
+#                            shadow_variables.F90
+#                            shadow_kernel.F90
 #
 
 FMODULES = \
@@ -171,8 +171,8 @@ OBJTESTS    = ${FTESTS:.F90=.o}
 #
 
 
-shadow3: $(OBJFMODULES) shadow3.o  
-	$(FC) $(LINKFLAGS) -o shadow3$(EXE) shadow3.o $(OBJFMODULES) 
+shadow3: $(OBJFMODULES) shadow3.o
+	$(FC) $(LINKFLAGS) -o shadow3$(EXE) shadow3.o $(OBJFMODULES)
 
 #create .f90 files (see rule) and clean (remove lines starting with #) them using sed
 preprocess: $(FMODULESPRE) shadow3.f90
@@ -181,7 +181,7 @@ preprocess: $(FMODULESPRE) shadow3.f90
 		sed -i '/^#/d' $$myfile ; \
 	done
 	echo "Removing lines starting with # in: shadow3.f90"
-	sed -i '/^#/d' shadow3.f90 
+	sed -i '/^#/d' shadow3.f90
 
 examples: examplesFortran  examplesMore
 
@@ -203,7 +203,7 @@ examplesMore: lib  libcpp
 	$(CC) $(CFLAGS) -c example_shadow_format.c
 	$(CC) $(CFLAGS) -o example_shadow_format example_shadow_format.o
 
-	$(CC) -I. $(CFLAGS) -c example01_c.c 
+	$(CC) -I. $(CFLAGS) -c example01_c.c
 	$(CC) $(CFLAGS) -o example01_c example01_c.o -L. -lshadow3c -lshadow3
 
 	$(CXX) -I. $(CFLAGS) -c trace3_cpp.cpp
@@ -216,7 +216,7 @@ ifeq ($(MPI),1)
 	$(MPIFC) $(FFLAGS) -o trace3mpi trace3mpi.o -L. -lshadow3 -lmpi_F90
 endif
 
-lib: $(OBJFMODULES) shadow_bind_c.o 
+lib: $(OBJFMODULES) shadow_bind_c.o
 	$(FC) $(LIBFLAGS) $(CFLAGS) -o libshadow3$(SO) $(OBJFMODULES)
 	$(CC) $(LIBFLAGS) $(CFLAGS) -o libshadow3c$(SO) shadow_bind_c.o -L. -lshadow3 #$(OBJFMODULES)
 
@@ -226,8 +226,8 @@ libcpp: $(OBJFMODULES) shadow_bind_c.o shadow_bind_cpp.o
 
 libstatic: $(OBJFMODULES) shadow_bind_c.o shadow_bind_cpp.o
 	ar cr libshadow3.a $(OBJFMODULES)
-	#ar cr libshadow3c.a shadow_bind_c.o $(OBJFMODULES)
-	#ar cr libshadow3c++.a shadow_bind_c.o shadow_bind_cpp.o $(OBJFMODULES)
+	ar cr libshadow3c.a shadow_bind_c.o $(OBJFMODULES)
+	ar cr libshadow3c++.a shadow_bind_c.o shadow_bind_cpp.o $(OBJFMODULES)
 
 idl: lib shadow_bind_idl.c shadow_bind_idl_loader.c shadow_bind_idl_loader.h idl_export.h shadow_bind_idl.dlm
 	$(CC) $(CFLAGS) -c shadow_bind_idl_loader.c
@@ -235,16 +235,16 @@ idl: lib shadow_bind_idl.c shadow_bind_idl_loader.c shadow_bind_idl_loader.h idl
 	$(CC) $(LIBFLAGS) -o shadow_bind_idl$(SO) -L. -lshadow3c shadow_bind_idl_loader.o shadow_bind_idl.o
 
 
-python: lib setup.py 
+python: lib setup.py
 	$(PY) setup.py build
 
 all: shadow3 examples python idl
 
-# 
+#
 # dependencies and rules
 #
 
-shadow_version.F90: shadow_version.h 
+shadow_version.F90: shadow_version.h
 
 shadow_version.h:
 # shadow_version.sh creates shadow_version.h including compilation info for current system
@@ -257,9 +257,9 @@ shadow_version.h:
 	$(FC) $(FFLAGS) -c $<
 
 #
-# cleaning 
+# cleaning
 #
-clean:  
+clean:
 	/bin/rm -f *.o *.mod *$(SO) *.a *.dylib
 	/bin/rm -f version.txt
 	/bin/rm -f gen_source trace trace3 trace3mpi trace3_c trace3_cpp
@@ -268,16 +268,16 @@ clean:
 	/bin/rm -f example_standalone_mirror
 	/bin/rm -f shadow_version.h
 	/bin/rm -rf build *.pyc
-	/bin/rm -f *.f90 
+	/bin/rm -f *.f90
 
 #shadow runs
 #examples runs
 purge: clean
 	/bin/rm -f start.* end.* begin.dat star.* mirr.* screen.* \
                    systemfile.* effic.* angle.* optax.* focus focnew*
-	/bin/rm -f plotxy* histo1* shadow3.inp xshwig.* 
-	/bin/rm -f SRANG SRDISTR SRSPEC epath.nml 
-	/bin/rm -f F12LIB.INDEX F12LIB.FULL 
+	/bin/rm -f plotxy* histo1* shadow3.inp xshwig.*
+	/bin/rm -f SRANG SRDISTR SRSPEC epath.nml
+	/bin/rm -f F12LIB.INDEX F12LIB.FULL
 	/bin/rm -f testio.00 crl.01 final.01
 # customize depending on where you want to install
 install:
@@ -286,7 +286,3 @@ install:
 	install shadow3 /usr/bin/
 #	/bin/cp shadow3 /opt/scisoft/xop2.3/extensions/shadowvui/shadow3/shadow3
 #	/bin/cp shadow3 /scisoft/xop2.3/extensions/shadowvui/shadow-2.3.2m-linux/bin/shadow3
-
-	
-
-
